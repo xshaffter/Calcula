@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    {% if not pago_pendiente %}
+                                        <h3>Agregar Pago Pendiente</h3>
+                                    {% else %}
+                                        <h3>Movimiento #{{ pago_pendiente.pk }}</h3>
+                                    {% endif %}
+                                </div>
+                                <div class="col-8 d-flex align-items-center justify-content-end">
+                                    {% if not pago_pendiente %}
+                                        <a href="{% url "tarjeta_detalle" tarjeta.id %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                    {% else %}
+                                        <a href="{% url "tarjeta_detalle" pago_pendiente.tarjeta_id %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                    {% endif %}
+                                    <button class="btn btn-success ml-2"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="field-group">
+                                        <label for="{{ form.cantidad_original.id_for_label }}">{{ form.cantidad_original.label }}</label>
+                                        {% render_field form.cantidad_original class="form-control" %}
+                                        <span class="text-danger">{{ form.cantidad_original.errors }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="field-group">
+                                        <label for="{{ form.moneda.id_for_label }}">{{ form.moneda.label }}</label>
+                                        {% render_field form.moneda class="form-control" %}
+                                        <span class="text-danger">{{ form.moneda.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="field-group">
+                                        <label for="{{ form.concepto.id_for_label }}">{{ form.concepto.label }}</label>
+                                        {% render_field form.concepto class="form-control" %}
+                                        <span class="text-danger">{{ form.concepto.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-check form-switch">
+                                        {% render_field form.pago_automatico class="form-check-input" %}
+                                        <label for="{{ form.pago_automatico.id_for_label }}" class="form-check-label">{{ form.pago_automatico.label }}</label>
+                                        <span class="text-danger">{{ form.pago_automatico.errors }}</span>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        {% render_field form.pago_unico class="form-check-input" %}
+                                        <label for="{{ form.pago_unico.id_for_label }}" class="form-check-label">{{ form.pago_unico.label }}</label>
+                                        <span class="text-danger">{{ form.pago_unico.errors }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="field-group">
+                                        <label for="{{ form.periodicidad.id_for_label }}">{{ form.periodicidad.label }}</label>
+                                        {% render_field form.periodicidad class="form-control" %}
+                                        <span class="text-danger">{{ form.periodicidad.errors }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="field-group">
+                                        <label for="{{ form.programacion.id_for_label }}">{{ form.programacion.label }}</label>
+                                        {% render_field form.programacion class="form-control" %}
+                                        <span class="text-danger">{{ form.programacion.errors }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock content %}

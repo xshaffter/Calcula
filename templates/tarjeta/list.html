@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Dueño</th>
+                                    <th>Banco</th>
+                                    <th>Balance</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tarjeta in request.user.tarjeta_set.all %}
+                                    <tr>
+                                        <td>{{ tarjeta.numero }}</td>
+                                        <td>{{ tarjeta.owner.email }}</td>
+                                        <td>{{ tarjeta.banco }}</td>
+                                        <td>{{ tarjeta.balance }}</td>
+                                        <td>
+                                            <a href="{% url "tarjeta_detalle" tarjeta.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
+                                            <a href="{% url "tarjeta_add_movimiento" tarjeta.pk %}" class="btn btn-sm btn-success"><i class="fa fa-upload"></i></a>
+                                            <a href="{% url "tarjeta_refresh" tarjeta.pk %}" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
