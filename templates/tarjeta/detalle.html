@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4"><h3>Tarjeta {{ tarjeta.pk }}</h3></div>
+                        <div class="col-8 d-flex flex-row-reverse">
+                            <a href="{% url "tarjeta_refresh" tarjeta.pk %}?next={% url "tarjeta_detalle" tarjeta.pk %}" class="btn btn-info"><i
+                                    class="fa fa-refresh"></i></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="field-group">
+                                <label class="font-weight-bold">Número</label>
+                                <div>{{ tarjeta.numero }}</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="field-group">
+                                <label class="font-weight-bold">Banco</label>
+                                <div>{{ tarjeta.banco }}</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="field-group">
+                                <label class="font-weight-bold">Dueño</label>
+                                <div>{{ tarjeta.owner }}</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="field-group">
+                                <label class="font-weight-bold">Balance</label>
+                                <div>{{ tarjeta.balance }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-4"><h3>Movimientos</h3></div>
+                        <div class="col-8 d-flex flex-row-reverse">
+                            <a href="{% url "tarjeta_add_movimiento" tarjeta.pk %}">
+                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Monto a pagar</th>
+                                <th>Moneda</th>
+                                <th>Monto pagado</th>
+                                <th>Concepto</th>
+                                <th>Adjuntos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movimiento in movimientos %}
+                                <tr>
+                                    <td>{{ movimiento.get_tipo_display }}</td>
+                                    <td>${{ movimiento.cantidad_original }}</td>
+                                    <td>{{ movimiento.moneda }}</td>
+                                    <td>${{ movimiento.cantidad }} MXN</td>
+                                    <td>{{ movimiento.concepto }}</td>
+                                    <td>
+                                        {% if movimiento.adjunto %}
+                                            <button class="btn btn-info btn-sm" onclick="load_adjuntos({{ movimiento.id }})">
+                                                <i class="fa fa-search"></i></button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url "movimiento_refresh" movimiento.pk %}" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></a>
+                                        <a href="{% url "movimiento_detalle" movimiento.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
+                                        <a href="{% url "movimiento_edit" movimiento.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                        <a href="{% url "movimiento_eliminar" movimiento.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-center justify-content-center">
+                            <div class="pagination">
+                                <span class="step-links">
+                                    {% if movimientos.has_previous %}
+                                        <a href="?page=1">&laquo; first</a>
+                                        <a href="?page={{ movimientos.previous_page_number }}">previous</a>
+                                    {% endif %}
+
+                                    <span class="current">
+                                        Page {{ movimientos.number }} of {{ movimientos.paginator.num_pages }}.
+                                    </span>
+
+                                    {% if movimientos.has_next %}
+                                        <a href="?page={{ movimientos.next_page_number }}">next</a>
+                                        <a href="?page={{ movimientos.paginator.num_pages }}">last &raquo;</a>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-4"><h3>Pagos pendientes</h3></div>
+                        <div class="col-8 d-flex flex-row-reverse">
+                            <a href="{% url "tarjeta_add_pago_pendiente" tarjeta.pk %}">
+                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Monto a pagar</th>
+                                <th>Moneda</th>
+                                <th>Concepto</th>
+                                <th>Automatico</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago_pendiente in tarjeta.pagos_disponibles %}
+                                <tr>
+                                    <td>{{ pago_pendiente.cantidad_original }}</td>
+                                    <td>{{ pago_pendiente.moneda }}</td>
+                                    <td>{{ pago_pendiente.concepto }}</td>
+                                    <td>
+                                        {% if pago_pendiente.pago_automatico %}
+                                            <span class="text-success">SI</span>
+                                        {% else %}
+                                            <span class="text-danger">NO</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if pago_pendiente.pago_unico %}
+                                            {{ pago_pendiente.get_estatus_display }}
+                                        {% else %}
+                                            Perpetuo
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
+                                            <button class="btn btn-sm btn-success" onclick="pago_pendiente_pagar({{ pago_pendiente.id }})">
+                                                <i class="fa fa-check"></i></button>
+                                        {% endif %}
+                                        <a href="{% url "pago_pendiente_detalle" pago_pendiente.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
+                                        {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
+                                            <a href="{% url "pago_pendiente_editar" pago_pendiente.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                            <a href="{% url "pago_pendiente_eliminar" pago_pendiente.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <h3>Abonos pendientes</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal big-modal" tabindex="-1" role="dialog" id="adjuntos-modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content full-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" scrolling="no" id="adjuntos-iframe" class="full-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal big-modal" tabindex="-1" role="dialog" id="movimiento-delete">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content full-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" scrolling="no" id="adjuntos-iframe" class="full-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal big-modal" tabindex="-1" role="dialog" id="pago_pendiente-delete">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content full-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" scrolling="no" id="adjuntos-iframe" class="full-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal big-modal" tabindex="-1" role="dialog" id="pago_pendiente-pagar">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content full-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="pagar-form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="adjunto" class="form-control-file" required>
+                        <input type="submit" value="Pagar" class="btn btn-success">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $('.modal').modal('hide')
+        })
+
+        function pago_pendiente_pagar(pago_pendiente_id) {
+            $("#pagar-form").attr('action', '{% url "pago_pendiente_pagar" 0 %}'.replace('0', pago_pendiente_id))
+            $('#pago_pendiente-pagar').modal('show')
+        }
+
+        function load_adjuntos(movimiento_id) {
+            $('#adjuntos-iframe').attr('src', '{% url "movimiento_adjuntos" 0 %}'.replace('0', movimiento_id))
+            $('#adjuntos-modal').modal('show')
+        }
+    </script>
+{% endblock %}

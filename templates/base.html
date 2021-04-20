@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title|default:"Calcula" }}</title>
+        <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
+        <link rel="stylesheet" href="{% static "css/app.css" %}">
+        <link rel="shortcut icon" href="{% static "imgs/icono.png" %}" />
+    </head>
+    <body>
+
+        {% include "components/navbar.html" %}
+
+        {% block content %}
+
+        {% endblock %}
+
+        <script src="{% static "js/jquery-3.6.0.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.js" %}"></script>
+        <script src="https://kit.fontawesome.com/946024f008.js" crossorigin="anonymous"></script>
+        {% block extrajs %}
+
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,61 @@
+[
+  {
+    "model": "cat.Moneda",
+    "pk": 1,
+    "fields": {
+      "nombre": "Peso mexicano",
+      "nombre_corto": "MXN"
+    }
+  },
+  {
+    "model": "cat.Moneda",
+    "pk": 2,
+    "fields": {
+      "nombre": "Dolar americano",
+      "nombre_corto": "USD"
+    }
+  },
+  {
+    "model": "cat.Moneda",
+    "pk": 3,
+    "fields": {
+      "nombre": "Euro",
+      "nombre_corto": "EUR"
+    }
+  },
+  {
+    "model": "cat.Moneda",
+    "pk": 4,
+    "fields": {
+      "nombre": "Dolar canadiense",
+      "nombre_corto": "CAD"
+    }
+  },
+  {
+    "model": "cat.Conversion",
+    "pk": 1,
+    "fields": {
+      "moneda_origen":  1,
+      "moneda_objetivo": 2,
+      "factor": 20.58
+    }
+  },
+  {
+    "model": "cat.Conversion",
+    "pk": 2,
+    "fields": {
+      "moneda_origen":  3,
+      "moneda_objetivo": 2,
+      "factor": 24.13
+    }
+  },
+  {
+    "model": "cat.Conversion",
+    "pk": 3,
+    "fields": {
+      "moneda_origen":  4,
+      "moneda_objetivo": 2,
+      "factor": 16.30
+    }
+  }
+]
