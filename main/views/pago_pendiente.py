@@ -14,7 +14,7 @@ def pago_pendiente_detalle(request, pago_pendiente_id):
         'form': form,
         'pago_pendiente': pago_pendiente,
     }
-    return render(request, 'pago_pendiente/detalle.html', context)
+    return render(request, 'management/models/pago_pendiente/detalle.html', context)
 
 
 class PagoPendienteEditView(views.View):
@@ -26,7 +26,7 @@ class PagoPendienteEditView(views.View):
             'form': form,
             'pago_pendiente': pago_pendiente,
         }
-        return render(request, 'pago_pendiente/form.html', context)
+        return render(request, 'management/models/pago_pendiente/form.html', context)
 
     def post(self, request, pago_pendiente_id):
         pago_pendiente = get_object_or_404(PagoPendiente, pk=pago_pendiente_id)
@@ -38,7 +38,7 @@ class PagoPendienteEditView(views.View):
             'form': form,
             'pago_pendiente': pago_pendiente,
         }
-        return render(request, 'pago_pendiente/form.html', context)
+        return render(request, 'management/models/pago_pendiente/form.html', context)
 
 
 class PagoPendienteCreateView(views.View):
@@ -50,7 +50,7 @@ class PagoPendienteCreateView(views.View):
             'form': form,
             'tarjeta': tarjeta,
         }
-        return render(request, 'pago_pendiente/form.html', context)
+        return render(request, 'management/models/pago_pendiente/form.html', context)
 
     def post(self, request, tarjeta_id):
         tarjeta = get_object_or_404(Tarjeta, pk=tarjeta_id)
@@ -64,7 +64,7 @@ class PagoPendienteCreateView(views.View):
             'form': form,
             'tarjeta': tarjeta,
         }
-        return render(request, 'pago_pendiente/form.html', context)
+        return render(request, 'management/models/pago_pendiente/form.html', context)
 
 
 def eliminar_pago_pendiente(request, pago_pendiente_id):

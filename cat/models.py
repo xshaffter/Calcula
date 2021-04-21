@@ -6,11 +6,41 @@ from django.db.models import Sum
 
 
 class Tarjeta(models.Model):
+    TABLE_HEADERS = [
+        {
+            'display': 'Owner',
+            'name': 'owner_name',
+        }, {
+            'display': 'RFC',
+            'name': 'rfc'
+        }, {
+            'display': 'Numero',
+            'name': 'numero'
+        }, {
+            'display': 'Banco',
+            'name': 'banco'
+        }, {
+            'display': 'Balance',
+            'name': 'balance'
+        },
+    ]
     owner = models.ForeignKey(User, null=True, blank=False, on_delete=models.CASCADE)
     rfc = models.CharField(max_length=15, null=True, blank=False)
     numero = models.CharField(max_length=16)
     banco = models.CharField(max_length=25)
     balance = models.DecimalField(default=0, decimal_places=2, max_digits=15)
+
+    def actions(self):
+        actions = [{
+            'url': '{}/refresh/'.format(self.pk),
+            'class': 'fa fa-refresh',
+            'button_class': 'btn btn-info'
+        },{
+            'url': '{}/delete/'.format(self.pk),
+            'class': 'fa fa-times',
+            'button_class': 'btn btn-danger'
+        }]
+        return actions
 
     def __str__(self):
         return '{}|{}|{}'.format(self.numero[-4:], self.banco, self.balance)
@@ -24,8 +54,33 @@ class Tarjeta(models.Model):
     def pagos_disponibles(self):
         return self.pagos_pendientes.exclude(estatus=PagoPendiente.PAGADO)
 
+    def movimientos_disponibles(self):
+        return self.movimiento_set.all().order_by('-fecha')
+
 
 class Movimiento(models.Model):
+    TABLE_HEADERS = [
+        {
+            'display': 'Tipo',
+            'name': 'tipo',
+        }, {
+            'display': 'Monto a pagar',
+            'name': 'cantidad_original'
+        }, {
+            'display': 'Moneda',
+            'name': 'moneda'
+        }, {
+            'display': 'Monto pagado',
+            'name': 'cantidad'
+        }, {
+            'display': 'Concepto',
+            'name': 'concepto'
+        }, {
+            'display': 'Adjuntos',
+            'name': 'adjunto',
+            'type': 'modal'
+        },
+    ]
     INGRESO = 0
     EGRESO = 1
 
@@ -34,6 +89,7 @@ class Movimiento(models.Model):
         (EGRESO, 'Egreso'),
     )
 
+    abono_pendiente = models.ForeignKey('cat.AbonoPendiente', on_delete=models.SET_NULL, null=True, blank=True)
     moneda = models.ForeignKey('cat.Moneda', on_delete=models.SET_NULL, null=True, blank=False)
     cantidad_original = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto a pagar')
     tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False)
@@ -72,7 +128,8 @@ class PagoPendiente(models.Model):
     moneda = models.ForeignKey('cat.Moneda', on_delete=models.SET_NULL, null=True, blank=False)
     cantidad_original = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto a pagar')
     estatus = models.SmallIntegerField(choices=ESTADOS, default=PENDIENTE)
-    tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False, related_name='pagos_pendientes')
+    tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False,
+                                related_name='pagos_pendientes')
     concepto = models.CharField(max_length=250, null=True, blank=False)
     programacion = models.CharField(max_length=10)
     pago_automatico = models.BooleanField(default=False)
@@ -141,7 +198,8 @@ class AbonoPendiente(models.Model):
     moneda = models.ForeignKey('cat.Moneda', on_delete=models.SET_NULL, null=True, blank=False)
     cantidad_original = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto a pagar')
     estatus = models.SmallIntegerField(choices=ESTADOS, default=PENDIENTE)
-    tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False, related_name='abonos_pendientes')
+    tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False,
+                                related_name='abonos_pendientes')
     concepto = models.CharField(max_length=250, null=True, blank=False)
     programacion = models.CharField(max_length=10)
     pago_automatico = models.BooleanField(default=False)

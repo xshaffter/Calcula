@@ -1,0 +1,23 @@
+{% load widget_tweaks %}
+
+{% if not inverted %}
+    <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% if class %}
+            {% render_field field class=class %}
+        {% else %}
+            {% render_field field %}
+        {% endif %}
+        <span class="text-danger">{{ field.errors }}</span>
+    </div>
+{% else %}
+    <div class="form-group">
+        {% if class %}
+            {% render_field field class=class %}
+        {% else %}
+            {% render_field field %}
+        {% endif %}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <span class="text-danger">{{ field.errors }}</span>
+    </div>
+{% endif %}

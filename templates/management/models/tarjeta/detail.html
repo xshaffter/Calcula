@@ -6,9 +6,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-4"><h3>Tarjeta {{ tarjeta.pk }}</h3></div>
+                        <div class="col-4"><h3>Tarjeta #{{ item_id }}</h3></div>
                         <div class="col-8 d-flex flex-row-reverse">
-                            <a href="{% url "tarjeta_refresh" tarjeta.pk %}?next={% url "tarjeta_detalle" tarjeta.pk %}" class="btn btn-info"><i
+                            <a href="{% url "tarjeta_refresh" item_id %}?next={% url "tarjeta_detalle" item_id %}" class="btn btn-info"><i
                                     class="fa fa-refresh"></i></a>
                         </div>
                     </div>
@@ -16,25 +16,25 @@
                         <div class="col-3">
                             <div class="field-group">
                                 <label class="font-weight-bold">Número</label>
-                                <div>{{ tarjeta.numero }}</div>
+                                <div>{{ item.numero }}</div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="field-group">
                                 <label class="font-weight-bold">Banco</label>
-                                <div>{{ tarjeta.banco }}</div>
+                                <div>{{ item.banco }}</div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="field-group">
                                 <label class="font-weight-bold">Dueño</label>
-                                <div>{{ tarjeta.owner }}</div>
+                                <div>{{ item.owner }}</div>
                             </div>
                         </div>
                         <div class="col-3">
                             <div class="field-group">
                                 <label class="font-weight-bold">Balance</label>
-                                <div>{{ tarjeta.balance }}</div>
+                                <div>{{ item.balance }}</div>
                             </div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-4"><h3>Movimientos</h3></div>
                         <div class="col-8 d-flex flex-row-reverse">
-                            <a href="{% url "tarjeta_add_movimiento" tarjeta.pk %}">
+                            <a href="{% url "tarjeta_add_movimiento" item_id %}">
                                 <button class="btn btn-success"><i class="fa fa-plus"></i></button>
                             </a>
                         </div>
@@ -60,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for movimiento in movimientos %}
+                            {% for movimiento in item.movimientos_disponibles.all %}
                                 <tr>
                                     <td>{{ movimiento.get_tipo_display }}</td>
                                     <td>${{ movimiento.cantidad_original }}</td>
@@ -76,39 +76,18 @@
                                     <td>
                                         <a href="{% url "movimiento_refresh" movimiento.pk %}" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></a>
                                         <a href="{% url "movimiento_detalle" movimiento.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
-                                        <a href="{% url "movimiento_edit" movimiento.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                        <a href="{% url "movimiento_edit" movimiento.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
                                         <a href="{% url "movimiento_eliminar" movimiento.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
                                     </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                     </table>
-                    <div class="row">
-                        <div class="col-12 d-flex align-items-center justify-content-center">
-                            <div class="pagination">
-                                <span class="step-links">
-                                    {% if movimientos.has_previous %}
-                                        <a href="?page=1">&laquo; first</a>
-                                        <a href="?page={{ movimientos.previous_page_number }}">previous</a>
-                                    {% endif %}
-
-                                    <span class="current">
-                                        Page {{ movimientos.number }} of {{ movimientos.paginator.num_pages }}.
-                                    </span>
-
-                                    {% if movimientos.has_next %}
-                                        <a href="?page={{ movimientos.next_page_number }}">next</a>
-                                        <a href="?page={{ movimientos.paginator.num_pages }}">last &raquo;</a>
-                                    {% endif %}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
                     <hr>
                     <div class="row">
                         <div class="col-4"><h3>Pagos pendientes</h3></div>
                         <div class="col-8 d-flex flex-row-reverse">
-                            <a href="{% url "tarjeta_add_pago_pendiente" tarjeta.pk %}">
+                            <a href="{% url "tarjeta_add_pago_pendiente" item_id %}">
                                 <button class="btn btn-success"><i class="fa fa-plus"></i></button>
                             </a>
                         </div>
@@ -125,7 +104,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for pago_pendiente in tarjeta.pagos_disponibles %}
+                            {% for pago_pendiente in item.pagos_disponibles %}
                                 <tr>
                                     <td>{{ pago_pendiente.cantidad_original }}</td>
                                     <td>{{ pago_pendiente.moneda }}</td>
@@ -147,11 +126,11 @@
                                     <td>
                                         {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
                                             <button class="btn btn-sm btn-success" onclick="pago_pendiente_pagar({{ pago_pendiente.id }})">
-                                                <i class="fa fa-check"></i></button>
+                                                <i class="fa fa-credit-card"></i></button>
                                         {% endif %}
                                         <a href="{% url "pago_pendiente_detalle" pago_pendiente.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
                                         {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
-                                            <a href="{% url "pago_pendiente_editar" pago_pendiente.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                            <a href="{% url "pago_pendiente_editar" pago_pendiente.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
                                             <a href="{% url "pago_pendiente_eliminar" pago_pendiente.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
                                         {% endif %}
                                     </td>
@@ -166,7 +145,38 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <h3>Abonos pendientes</h3>
+                        <div class="col-4">
+                            <h3>Abonos pendientes</h3>
+                        </div>
+                        <div class="col-8 d-flex flex-row justify-content-end">
+                            <a href="{% url "tarjeta_add_pago_pendiente" item_id %}">
+                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table-striped table">
+                            <thead>
+                                <tr>
+                                    <th>Cantidad total</th>
+                                    <th>Moneda</th>
+                                    <th>Cantidad pendiente</th>
+                                    <th>Concepto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for abono_pendiente in item.abonos_pendientes.all %}
+                                    <tr>
+                                        <td>{{ abono_pendiente.cantidad_original }}</td>
+                                        <td>{{ abono_pendiente.moneda }}</td>
+                                        <td>{{ abono_pendiente.cantidad_pendiente }}</td>
+                                        <td>{{ abono_pendiente.concepto }}</td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

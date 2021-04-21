@@ -12,7 +12,7 @@ class TarjetaListView(views.View):
         context = {
 
         }
-        return render(request, 'tarjeta/list.html', context)
+        return render(request, 'management/models/tarjeta/list.html', context)
 
 
 def refresh_tarjeta(request, tarjeta_id):
@@ -70,4 +70,4 @@ def detalle_tarjeta(request, tarjeta_id):
         'tarjeta': tarjeta,
         'movimientos': movimientos
     }
-    return render(request, 'tarjeta/detalle.html', context)
+    return render(request, 'management/models/tarjeta/detail.html', context)
