@@ -1,0 +1,48 @@
+{% load widget_tweaks %}
+{% if ng_model %}
+    {% if not inverted %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% if class %}
+                {% render_field field class=class ng-model=ng_model %}
+            {% else %}
+                {% render_field field ng-model=ng_model %}
+            {% endif %}
+                <span class="text-danger">{$ data.errors.{{field.name}} $}</span>
+        </div>
+    {% else %}
+        <div class="form-group">
+            {% if class %}
+                {% render_field field class=class ng-model=ng_model %}
+            {% else %}
+                {% render_field field ng-model=ng_model %}
+            {% endif %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <span class="text-danger">{$ data.errors.{{field.name}} $}</span>
+        </div>
+    {% endif %}
+{% else %}
+    {% with ng_model="data."|add:field.name %}
+        {% if not inverted %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if class %}
+                    {% render_field field class=class ng-model=ng_model %}
+                {% else %}
+                    {% render_field field ng-model=ng_model %}
+                {% endif %}
+                <span class="text-danger">{$ data.errors.{{field.name}} $}</span>
+            </div>
+        {% else %}
+            <div class="form-group">
+                {% if class %}
+                    {% render_field field class=class ng-model=ng_model %}
+                {% else %}
+                    {% render_field field ng-model=ng_model %}
+                {% endif %}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <span class="text-danger">{$ data.errors.{{field.name}} $}</span>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endif %}

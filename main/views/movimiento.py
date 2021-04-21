@@ -11,7 +11,7 @@ def adjuntos_movimiento(request, movimiento_id):
     context = {
         'movimiento': movimiento,
     }
-    return render(request, 'movimiento/adjuntos.html', context)
+    return render(request, 'management/models/movimiento/adjuntos.html', context)
 
 
 def detalle_movimiento(request, movimiento_id):
@@ -21,7 +21,7 @@ def detalle_movimiento(request, movimiento_id):
         'form': form,
         'movimiento': movimiento,
     }
-    return render(request, 'movimiento/detalle.html', context)
+    return render(request, 'management/models/movimiento/detalle.html', context)
 
 
 class MovimientoEditView(views.View):
@@ -32,7 +32,7 @@ class MovimientoEditView(views.View):
             'form': form,
             'movimiento': movimiento,
         }
-        return render(request, 'movimiento/form.html', context)
+        return render(request, 'management/models/movimiento/form.html', context)
 
     def post(self, request, movimiento_id):
         movimiento = get_object_or_404(Movimiento, pk=movimiento_id)
@@ -44,7 +44,7 @@ class MovimientoEditView(views.View):
             'form': form,
             'movimiento': movimiento,
         }
-        return render(request, 'movimiento/form.html', context)
+        return render(request, 'management/models/movimiento/form.html', context)
 
 
 def eliminar_movimiento(request, movimiento_id):

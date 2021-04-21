@@ -1,0 +1,14 @@
+{% with ng_model="files."|add:field.name %}
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="file" ngf-select="{{ "files.selected."|add:field.name }} = true;" ng-model="{{ ng_model }}" name="{{ field.name }}" ngf-accept="'image/*'"
+                       class="form-control" id="{{ field.id_for_label }}">
+            </div>
+        </div>
+        <div class="col-8">
+            <img ngf-src="{{ ng_model }}" class="thumb">
+        </div>
+    </div>
+{% endwith %}

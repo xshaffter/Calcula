@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.css">
+{% endblock extrastyle %}
+
+{% block content %}
+    <div class="row mt-5" ng-controller="GenericFormController">
+    {% block form_content %}
+
+    {% endblock %}
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script>
+        main_url = "{{ main_url }}"
+        end_point = "{{ end_point }}"
+        item_id = "{{ item_id }}"
+        csrfmiddlewaretoken = "{{ csrf_token }}"
+    </script>
+    <script src="{% static "js/angular/GenericFormController.js" %}"></script>
+{% endblock %}

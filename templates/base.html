@@ -5,11 +5,12 @@
     <head>
         <meta charset="UTF-8">
         <title>{{ title|default:"Calcula" }}</title>
+        <link rel="stylesheet" href="{% static "css/font-awesome-4.7.0/css/font-awesome.min.css" %}">
         <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
         <link rel="stylesheet" href="{% static "css/app.css" %}">
         <link rel="shortcut icon" href="{% static "imgs/icono.png" %}" />
     </head>
-    <body>
+    <body ng-app="App">
 
         {% include "components/navbar.html" %}
 
@@ -17,9 +18,32 @@
 
         {% endblock %}
 
-        <script src="{% static "js/jquery-3.6.0.min.js" %}"></script>
+        <script src="{% static "js/jquery.min.js" %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
         <script src="{% static "js/bootstrap.js" %}"></script>
-        <script src="https://kit.fontawesome.com/946024f008.js" crossorigin="anonymous"></script>
+        <script src="{% static "js/angular.min.js" %}"></script>
+        <script src="{% static "js/ng_file/ng-file-upload-shim.min.js" %}"></script>
+        <script src="{% static "js/ng_file/ng-file-upload.min.js" %}"></script>
+        <script src="{% static "js/angular/app.js" %}"></script>
+        <script>
+            $(document).ready(function () {
+                $('.dropdown-submenu a.dropdown-item.dropdown-toggle').on("click", function (e) {
+                    let hasclass = $(this).hasClass('active')
+                    $('.dropdown-submenu a.dropdown-item.dropdown-toggle.active').removeClass('active').next('ul').toggle();
+                    if (!hasclass) {
+                        $(this).addClass('active')
+                        $(this).next('ul').toggle();
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                });
+                $('.dropdown>a.dropdown-toggle').on("click", function (e) {
+                    $('.dropdown-submenu a.dropdown-item.dropdown-toggle.active').removeClass('active').next('ul').toggle();
+                });
+            });
+        </script>
         {% block extrajs %}
 
         {% endblock %}

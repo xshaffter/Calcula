@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.css">
+{% endblock extrastyle %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mt-5" ng-controller="GenericListController">
+            <div class="col-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <h3 class="panel-title">{{ module_plural|capfirst }}</h3>
+                            </div>
+                            <div class="col-9 d-flex flex-row-reverse">
+                                <div>
+                                    <a href="{{ main_url }}add/" class="btn btn-success text-center"><i
+                                            class="fa fa-plus"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="head in headers" class="text-center">{$ head.display $}</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="record in records">
+                                    <td ng-repeat="head in headers" class="text-center">
+                                        <img ng-src="{$ acceed(record, head.name) $}" ng-if="head.type == 'img'" height="32">
+                                        <span ng-if="head.type != 'img'" ng-attr-ng-bind="record.{$ head.name $}"></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-row justify-content-end">
+                                            <a href="{{ main_url }}{$ record.id $}/detail/"
+                                               class="btn btn-dark ml-2"><i class="fa fa-book"></i></a>
+                                            <a href="{$ end_point $}{$ action.url $}" ng-class="action.button_class" class="ml-2" ng-repeat="action in record.actions">
+                                                <i ng-if="!action.name" class="{$ action.class $}"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr ng-if="records.length == 0">
+                                    <td class="text-center" colspan="{$ headers.length + 1$}">
+                                        There is no existing {$ module $}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script>
+        let main_url = "{{ main_url }}";
+        let end_point = "{{ end_point }}";
+        let module = "{{ module|capfirst }}";
+    </script>
+    <script src="{% static "js/angular/GenericListController.js" %}"></script>
+{% endblock %}
