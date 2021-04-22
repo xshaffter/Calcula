@@ -18,9 +18,9 @@
                                 </div>
                                 <div class="col-8 d-flex align-items-center justify-content-end">
                                     {% if not pago_pendiente %}
-                                        <a href="{% url "tarjeta_detalle" tarjeta.id %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                        <a href="{% url "cat:model_detail" parent_model id_parent %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
                                     {% else %}
-                                        <a href="{% url "tarjeta_detalle" pago_pendiente.tarjeta_id %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                        <a href="{% url "cat:model_detail" parent_model id_parent %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
                                     {% endif %}
                                     <button class="btn btn-success ml-2"><i class="fa fa-check"></i></button>
                                 </div>

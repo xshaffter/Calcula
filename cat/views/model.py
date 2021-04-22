@@ -9,7 +9,7 @@ from cat import forms
 
 def get_model_or_404(model):
     try:
-        model_class = apps.get_model('cat', model.capitalize())
+        model_class = apps.get_model('cat', model.title())
     except LookupError or ValueError:
         raise Http404
 
@@ -18,7 +18,7 @@ def get_model_or_404(model):
 
 
 def get_basic_info(model):
-    model_class = apps.get_model('cat', model.capitalize())
+    model_class = apps.get_model('cat', model.title())
     return {
         'main_url': f"/cat/{model}/",
         'end_point': f"/api/{model}/",
@@ -68,9 +68,29 @@ def detail(request, model, id_model):
     return render(request, f'management/models/{model}/detail.html', context=context)
 
 
+def model_sub_add(request, parent_model, id_parent, child_model):
+    child_model_processed = child_model.replace("_", " ").title().replace(" ", "")
+    parent_model_processed = parent_model.replace("_", " ").title().replace(" ", "")
+    parent_model_class = get_model_or_404(parent_model_processed)
+    child_model_class = get_model_or_404(child_model_processed)
+    form_class = getattr(forms, f'{child_model_processed}Form')
+    item = get_object_or_404(parent_model_class, pk=id_parent)
+    form = form_class()
+    context = {
+        'parent_model': parent_model_processed.lower(),
+        'child_model': child_model_processed.lower(),
+        'form': form,
+        'item': item,
+        'id_parent': id_parent,
+    }
+    context.update(**get_basic_info(child_model_processed))
+    return render(request, f'management/models/{child_model}/add.html', context=context)
+
+
 urls = [
     path('<str:model>/list/', list, name='model_list'),
     path('<str:model>/add/', add, name='model_add'),
     path('<str:model>/<int:id_model>/delete/', delete, name='model_delete'),
     path('<str:model>/<int:id_model>/detail/', detail, name='model_detail'),
+    path('<str:parent_model>/<int:id_parent>/add/<str:child_model>/', model_sub_add, name='model_sub_add'),
 ]

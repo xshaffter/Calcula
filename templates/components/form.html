@@ -6,10 +6,12 @@
 {% endblock extrastyle %}
 
 {% block content %}
-    <div class="row mt-5" ng-controller="GenericFormController">
-    {% block form_content %}
+    <div class="container">
+        <div class="row mt-5" ng-controller="GenericFormController">
+            {% block form_content %}
 
-    {% endblock %}
+            {% endblock %}
+        </div>
     </div>
 {% endblock %}
 {% block extrajs %}

@@ -1,15 +1,15 @@
 App.controller('GenericListController', ['$scope', function ($scope) {
 
-    $scope.main_url = main_url;
-    $scope.end_point = end_point;
-    $scope.module = module;
-
     $scope.records = [];
     $scope.data = {};
 
     $scope.headers = [];
 
-    $scope.init = function () {
+    $scope.init = function (module) {
+        $scope.module = module;
+        $scope.model = module.replaceAll(' ', '').replaceAll('s', '').toLowerCase();
+        $scope.end_point = `/api/${$scope.model}/`;
+        $scope.main_url = `/cat/${$scope.model}/`
         $.ajax({
             url: '/api/modeldata/',
             data: {
@@ -40,6 +40,4 @@ App.controller('GenericListController', ['$scope', function ($scope) {
         });
         return value;
     }
-
-    $scope.init();
 }]);

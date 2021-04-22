@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{% static "css/font-awesome-4.7.0/css/font-awesome.min.css" %}">
         <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
         <link rel="stylesheet" href="{% static "css/app.css" %}">
-        <link rel="shortcut icon" href="{% static "imgs/icono.png" %}" />
+        <link rel="shortcut icon" href="{% static "imgs/icono.png" %}"/>
     </head>
     <body ng-app="App">
 
@@ -43,6 +43,9 @@
                     $('.dropdown-submenu a.dropdown-item.dropdown-toggle.active').removeClass('active').next('ul').toggle();
                 });
             });
+        </script>
+        <script>
+            csrfmiddlewaretoken = "{{ csrf_token }}"
         </script>
         {% block extrajs %}
 

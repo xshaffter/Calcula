@@ -1,0 +1,69 @@
+{% extends "components/form.html" %}
+{% load widget_tweaks %}
+{% block form_content %}
+    <div class="col-12">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            {% if not movimiento %}
+                                <h3>Agregar {{ child_model }}</h3>
+                            {% else %}
+                                <h3>Movimiento #{{ movimiento.pk }}</h3>
+                            {% endif %}
+                        </div>
+                        <div class="col-8 d-flex align-items-center justify-content-end">
+                            {% if not movimiento %}
+                                <a href="{% url "cat:model_detail" parent_model id_parent %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            {% else %}
+                                <a href="{% url "cat:model_detail" parent_model id_parent %}" class="btn btn-danger"><i class="fa fa-times"></i></a>
+                            {% endif %}
+                            <button class="btn btn-success ml-2"><i class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="field-group">
+                                <label for="{{ form.cantidad_original.id_for_label }}">{{ form.cantidad_original.label }}</label>
+                                {% render_field form.cantidad_original class="form-control" %}
+                                <span class="text-danger">{{ form.cantidad_original.errors }}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="field-group">
+                                <label for="{{ form.moneda.id_for_label }}">{{ form.moneda.label }}</label>
+                                {% render_field form.moneda class="form-control" %}
+                                <span class="text-danger">{{ form.moneda.errors }}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="field-group">
+                                <label for="{{ form.tipo.id_for_label }}">{{ form.tipo.label }}</label>
+                                {% render_field form.tipo class="form-control" %}
+                                <span class="text-danger">{{ form.tipo.errors }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="field-group">
+                                <label for="{{ form.concepto.id_for_label }}">{{ form.concepto.label }}</label>
+                                {% render_field form.concepto class="form-control" %}
+                                <span class="text-danger">{{ form.concepto.errors }}</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="field-group">
+                                <label for="{{ form.adjunto.id_for_label }}">{{ form.adjunto.label }}</label>
+                                {% render_field form.adjunto class="form-control-file" %}
+                                <span class="text-danger">{{ form.adjunto.errors }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock form_content %}

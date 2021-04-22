@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-6">
@@ -16,7 +16,7 @@
                         <div class="col-3">
                             <div class="field-group">
                                 <label class="font-weight-bold">Número</label>
-                                <div>{{ item.numero }}</div>
+                                <div>{{ item.get_tarjeta_display }}</div>
                             </div>
                         </div>
                         <div class="col-3">
@@ -39,111 +39,75 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="row">
-                        <div class="col-4"><h3>Movimientos</h3></div>
-                        <div class="col-8 d-flex flex-row-reverse">
-                            <a href="{% url "tarjeta_add_movimiento" item_id %}">
-                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
-                            </a>
-                        </div>
-                    </div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Monto a pagar</th>
-                                <th>Moneda</th>
-                                <th>Monto pagado</th>
-                                <th>Concepto</th>
-                                <th>Adjuntos</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for movimiento in item.movimientos_disponibles.all %}
-                                <tr>
-                                    <td>{{ movimiento.get_tipo_display }}</td>
-                                    <td>${{ movimiento.cantidad_original }}</td>
-                                    <td>{{ movimiento.moneda }}</td>
-                                    <td>${{ movimiento.cantidad }} MXN</td>
-                                    <td>{{ movimiento.concepto }}</td>
-                                    <td>
-                                        {% if movimiento.adjunto %}
-                                            <button class="btn btn-info btn-sm" onclick="load_adjuntos({{ movimiento.id }})">
-                                                <i class="fa fa-search"></i></button>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="{% url "movimiento_refresh" movimiento.pk %}" class="btn btn-sm btn-info"><i class="fa fa-refresh"></i></a>
-                                        <a href="{% url "movimiento_detalle" movimiento.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
-                                        <a href="{% url "movimiento_edit" movimiento.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
-                                        <a href="{% url "movimiento_eliminar" movimiento.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    {% include "components/sub_list.html" with parent="tarjeta" module="Movimientos" model="movimiento" %}
                     <hr>
-                    <div class="row">
-                        <div class="col-4"><h3>Pagos pendientes</h3></div>
-                        <div class="col-8 d-flex flex-row-reverse">
-                            <a href="{% url "tarjeta_add_pago_pendiente" item_id %}">
-                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
-                            </a>
+                    {% include "components/sub_list.html" with parent="tarjeta" module="Pagos pendientes" model="pagopendiente" %}
+                    <div class="row" ng-controller="GenericSubListController" ng-init="init('Pagos pendientes') ">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-4"><h3>{$ module $}</h3></div>
+                                <div class="col-8 d-flex flex-row-reverse">
+                                    <a href="{% url "cat:model_sub_add" "tarjeta" item_id "pago_pendiente" %}">
+                                        <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Monto a pagar</th>
+                                            <th>Moneda</th>
+                                            <th>Concepto</th>
+                                            <th>Automatico</th>
+                                            <th>Estatus</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for pago_pendiente in item.pagos_disponibles %}
+                                            <tr>
+                                                <td>{{ pago_pendiente.cantidad_original }}</td>
+                                                <td>{{ pago_pendiente.moneda }}</td>
+                                                <td>{{ pago_pendiente.concepto }}</td>
+                                                <td>
+                                                    {% if pago_pendiente.pago_automatico %}
+                                                        <span class="text-success">SI</span>
+                                                    {% else %}
+                                                        <span class="text-danger">NO</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if pago_pendiente.pago_unico %}
+                                                        {{ pago_pendiente.get_estatus_display }}
+                                                    {% else %}
+                                                        Perpetuo
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
+                                                        <button class="btn btn-sm btn-success" onclick="pago_pendiente_pagar({{ pago_pendiente.id }})">
+                                                            <i class="fa fa-credit-card"></i></button>
+                                                    {% endif %}
+                                                    <a href="{% url "pago_pendiente_detalle" pago_pendiente.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
+                                                    {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
+                                                        <a href="{% url "pago_pendiente_editar" pago_pendiente.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
+                                                        <a href="{% url "pago_pendiente_eliminar" pago_pendiente.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Monto a pagar</th>
-                                <th>Moneda</th>
-                                <th>Concepto</th>
-                                <th>Automatico</th>
-                                <th>Estatus</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for pago_pendiente in item.pagos_disponibles %}
-                                <tr>
-                                    <td>{{ pago_pendiente.cantidad_original }}</td>
-                                    <td>{{ pago_pendiente.moneda }}</td>
-                                    <td>{{ pago_pendiente.concepto }}</td>
-                                    <td>
-                                        {% if pago_pendiente.pago_automatico %}
-                                            <span class="text-success">SI</span>
-                                        {% else %}
-                                            <span class="text-danger">NO</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if pago_pendiente.pago_unico %}
-                                            {{ pago_pendiente.get_estatus_display }}
-                                        {% else %}
-                                            Perpetuo
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
-                                            <button class="btn btn-sm btn-success" onclick="pago_pendiente_pagar({{ pago_pendiente.id }})">
-                                                <i class="fa fa-credit-card"></i></button>
-                                        {% endif %}
-                                        <a href="{% url "pago_pendiente_detalle" pago_pendiente.pk %}" class="btn btn-sm btn-dark"><i class="fa fa-book"></i></a>
-                                        {% if pago_pendiente.estatus == pago_pendiente.PENDIENTE %}
-                                            <a href="{% url "pago_pendiente_editar" pago_pendiente.pk %}" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
-                                            <a href="{% url "pago_pendiente_eliminar" pago_pendiente.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
         <div class="col-md-12 col-lg-6 col-sm-12">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" ng-controller="GenericSubListController" ng-init="init('Abonos pendientes') ">
                     <div class="row">
                         <div class="col-4">
                             <h3>Abonos pendientes</h3>
@@ -264,4 +228,6 @@
             $('#adjuntos-modal').modal('show')
         }
     </script>
+    <script src="{% static "js/angular/GenericListController.js" %}"></script>
+    <script src="{% static "js/angular/GenericSubListController.js" %}"></script>
 {% endblock %}

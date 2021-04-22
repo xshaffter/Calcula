@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from cat.models import Tarjeta, Movimiento
+from cat.models import Tarjeta, Movimiento, PagoPendiente
 from rest_framework import serializers
 
 
@@ -27,11 +27,14 @@ class ModelDataSerializer(serializers.Serializer):
 
 
 class TarjetaSerializer(serializers.ModelSerializer):
-
     owner_name = serializers.SerializerMethodField()
+    numero = serializers.SerializerMethodField()
 
     def get_owner_name(self, instance):
         return instance.owner.username
+
+    def get_numero(self, instance):
+        return instance.get_tarjeta_display()
 
     class Meta:
         model = Tarjeta
@@ -47,6 +50,11 @@ class TarjetaSerializer(serializers.ModelSerializer):
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
+    moneda = serializers.SerializerMethodField()
+
+    def get_moneda(self, obj):
+        return obj.moneda.nombre_corto
+
     class Meta:
         model = Movimiento
         fields = (
@@ -60,4 +68,23 @@ class MovimientoSerializer(serializers.ModelSerializer):
             'adjunto',
             'concepto',
             'get_tipo_display',
+            'actions'
+        )
+
+
+class PagoPendienteSerializer(serializers.ModelSerializer):
+    moneda = serializers.SerializerMethodField()
+
+    def get_moneda(self, obj):
+        return obj.moneda.nombre_corto
+
+    class Meta:
+        model = PagoPendiente
+        fields = (
+            'cantidad_original',
+            'moneda',
+            'concepto',
+            'pago_automatico',
+            'get_estatus_display',
+            'actions'
         )
