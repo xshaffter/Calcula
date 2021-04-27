@@ -1,6 +1,7 @@
 import json
 
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.paginators import ShortResultsSetPagination
@@ -34,6 +35,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
     def refresh(self, request, pk=None, *args, **kwargs):
         instance = self.queryset.get(pk=pk)
         instance.define_cantidad()

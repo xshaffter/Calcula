@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from cat.models import Tarjeta, Movimiento, PagoPendiente
+from cat.models import Tarjeta, Movimiento, PagoPendiente, AbonoPendiente
 from rest_framework import serializers
 
 
@@ -50,17 +50,19 @@ class TarjetaSerializer(serializers.ModelSerializer):
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
-    moneda = serializers.SerializerMethodField()
+    moneda_display = serializers.SerializerMethodField()
 
-    def get_moneda(self, obj):
+    def get_moneda_display(self, obj):
         return obj.moneda.nombre_corto
 
     class Meta:
         model = Movimiento
         fields = (
             'id',
+            'tarjeta',
             'abono_pendiente',
             'moneda',
+            'moneda_display',
             'cantidad_original',
             'tarjeta',
             'cantidad',
@@ -73,16 +75,40 @@ class MovimientoSerializer(serializers.ModelSerializer):
 
 
 class PagoPendienteSerializer(serializers.ModelSerializer):
-    moneda = serializers.SerializerMethodField()
+    moneda_display = serializers.SerializerMethodField()
 
-    def get_moneda(self, obj):
+    def get_moneda_display(self, obj):
         return obj.moneda.nombre_corto
 
     class Meta:
         model = PagoPendiente
         fields = (
+            'id',
+            'tarjeta',
             'cantidad_original',
             'moneda',
+            'moneda_display',
+            'concepto',
+            'pago_automatico',
+            'get_estatus_display',
+            'actions'
+        )
+
+
+class AbonoPendienteSerializer(serializers.ModelSerializer):
+    moneda_display = serializers.SerializerMethodField()
+
+    def get_moneda_display(self, obj):
+        return obj.moneda.nombre_corto
+
+    class Meta:
+        model = AbonoPendiente
+        fields = (
+            'id',
+            'tarjeta',
+            'cantidad_original',
+            'moneda',
+            'moneda_display',
             'concepto',
             'pago_automatico',
             'get_estatus_display',

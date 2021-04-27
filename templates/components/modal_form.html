@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title|default:"Calcula" }}</title>
+        <link rel="stylesheet" href="{% static "css/font-awesome-4.7.0/css/font-awesome.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/bootstrap.css" %}">
+        <link rel="stylesheet" href="{% static "css/app.css" %}">
+        <link rel="shortcut icon" href="{% static "imgs/icono.png" %}"/>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.css">
+    </head>
+    <body>
+        <form method="POST" enctype="multipart/form-data" id="form">
+            {% csrf_token %}
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-8">
+                            <h3>{{ action|capfirst }} {{ module }} #{{ item.id }}</h3>
+                        </div>
+                        <div class="col-4 d-flex align-items-center justify-content-end">
+                            <button onclick="parent.close_modal()" type="button" class="btn btn-danger"><i
+                                    class="fa fa-times"></i></button>
+                            <button class="btn btn-success ml-2" onclick="$('#form').submit()"><i
+                                    class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                    {% block form_content %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </form>
+        <script src="{% static "js/jquery.min.js" %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="{% static "js/bootstrap.js" %}"></script>
+    </body>
+</html>

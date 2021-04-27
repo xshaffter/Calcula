@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cat.models import Tarjeta, Movimiento, PagoPendiente, Moneda, Conversion
+from cat.models import Tarjeta, Movimiento, PagoPendiente, Moneda, Conversion, AbonoPendiente
 
 
 def define_balance(modeladmin, request, queryset):
@@ -27,6 +27,9 @@ class MovimientoAdmin(admin.ModelAdmin):
     )
     list_display = (
         'tarjeta',
+        'cantidad_original',
+        'moneda',
+        'cantidad',
         'tipo',
         'concepto',
         'fecha'
@@ -46,4 +49,5 @@ class PagoPendienteAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register((Moneda, Conversion),)
+admin.site.register((Moneda, Conversion))
+admin.site.register(AbonoPendiente,)

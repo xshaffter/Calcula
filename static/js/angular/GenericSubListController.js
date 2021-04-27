@@ -34,6 +34,13 @@ App.controller('GenericSubListController', ['$scope', function ($scope) {
         })
     }
 
+    $scope.send_api = function (url) {
+        let consume = window.location.origin + url
+        $.ajax(consume).done(function (res) {
+            $scope.load();
+        })
+    }
+
     $scope.acceed = function (object, direction) {
         let accessors = direction.replaceAll('[', '.').replaceAll(']', '').split('.')
         let value = false;
@@ -71,5 +78,11 @@ App.controller('GenericSubListController', ['$scope', function ($scope) {
     }
     $scope.goto = function (page) {
         $scope.load(page)
+    }
+
+    $scope.open_modal_with_action = function(record, action) {
+        let url = $scope.main_url + record + `/${action}/`
+        $('#modal').modal('show')
+        $('#modal-frame').attr('src', url)
     }
 }]);

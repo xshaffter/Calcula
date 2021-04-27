@@ -7,7 +7,8 @@
 
 {% block content %}
     <div class="container">
-        <div class="row mt-5" ng-controller="GenericFormController">
+        <div class="row mt-5" ng-controller="GenericFormController"
+             ng-init="init('{{ module }}', '{{ child_model }}', '{{ item.id|default:"" }}')">
             {% block form_content %}
 
             {% endblock %}
@@ -17,7 +18,7 @@
 {% block extrajs %}
     <script>
         main_url = "{{ main_url }}"
-        end_point = "{{ end_point }}"
+        end_point = "{{ end_point|lower }}"
         item_id = "{{ item_id }}"
         csrfmiddlewaretoken = "{{ csrf_token }}"
     </script>

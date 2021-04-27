@@ -10,5 +10,5 @@ urlpatterns = [
     path('api/', include(api_urls)),
     path('cat/', include((cat_urls, 'cat'), namespace='cat')),
     path('admin/', admin.site.urls),
-    path('', include(main_urls))
+    path('', include((main_urls, 'main'), namespace='app')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

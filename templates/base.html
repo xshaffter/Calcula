@@ -28,6 +28,7 @@
         <script src="{% static "js/ng_file/ng-file-upload.min.js" %}"></script>
         <script src="{% static "js/angular/app.js" %}"></script>
         <script>
+            $('.modal').modal()
             $(document).ready(function () {
                 $('.dropdown-submenu a.dropdown-item.dropdown-toggle').on("click", function (e) {
                     let hasclass = $(this).hasClass('active')
@@ -46,6 +47,19 @@
         </script>
         <script>
             csrfmiddlewaretoken = "{{ csrf_token }}"
+
+            function close_modal() {
+                $('#modal').modal('hide')
+            }
+
+            function close_modal_and_reload() {
+                let controllers = $('[ng-controller="GenericSubListController"]');
+                controllers.each(function (index, controller) {
+                    let $scope = $(controller).scope();
+                    $scope.load();
+                });
+                close_modal();
+            }
         </script>
         {% block extrajs %}
 
