@@ -12,10 +12,9 @@ from cat.models import Tarjeta
 def get_model_or_404(model):
     try:
         model_class = apps.get_model('cat', model.title())
+        view, args, kwargs = resolve(f'/api/{model}/')
     except LookupError or ValueError:
         raise Http404
-
-    view, args, kwargs = resolve(f'/api/{model}/')
     return model_class
 
 
@@ -32,7 +31,8 @@ def get_basic_info(model):
 def list(request, model):
     model_class = get_model_or_404(model)
     context = {
-        'weapons': model_class.objects.all()
+        'model': model
+
     }
     context.update(**get_basic_info(model))
     return render(request, 'components/list.html', context=context)

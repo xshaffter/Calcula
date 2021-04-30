@@ -4,6 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from api.paginators import MediumResultsSetPagination
 from api.serializers import TarjetaSerializer
 from cat.models import Tarjeta
 
@@ -11,6 +12,14 @@ from cat.models import Tarjeta
 class TarjetaViewSet(viewsets.ModelViewSet):
     queryset = Tarjeta.objects.all()
     serializer_class = TarjetaSerializer
+    pagination_class = MediumResultsSetPagination
+
+    def list(self, request, *args, **kwargs):
+        user_id = request.GET.get('user_id')
+        queryset = self.queryset.filter(owner_id=user_id)
+        serializer = self.get_serializer(instance=queryset, many=True)
+        pagination = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(pagination)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=json.loads(request.data['data']))

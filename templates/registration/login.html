@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container mb-4" style="margin-top: 7em;">
+        <div class="card">
+            <div class="card-body">
+
+                <h2>Iniciar sesión</h2>
+                <form method="post" id="form">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                                {% render_field form.username class="form-control" %}
+                                <span class="text-danger">{{ form.username.errors }}</span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                                {% render_field form.password class="form-control" %}
+                                <span class="text-danger">{{ form.password.errors }}</span>
+                            </div>
+                        </div>
+                        {% if form.non_field_errors or messages %}
+                            <div class="col-12">
+                                <div class="alert alert-danger not-dismiss">
+                                    {{ form.non_field_errors }}
+                                    {% for message in messages %}
+                                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                                            <li>{{ message }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="col-12 mt-3 mb-4">
+                            <button type="submit" onclick="$('#form').submit()" class="btn btn-success">Iniciar sesión
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

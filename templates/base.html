@@ -46,6 +46,7 @@
             });
         </script>
         <script>
+            let user_id = {{ request.user.id }};
             csrfmiddlewaretoken = "{{ csrf_token }}"
 
             function close_modal() {

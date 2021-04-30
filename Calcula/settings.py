@@ -124,9 +124,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+# ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 FIXTURE_DIRS = [BASE_DIR / 'fixtures']
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 CURRENCY_APIKEY = "705783a7db80addcb45f"
 CURRENCY_API = "https://free.currconv.com/api/v7/convert?q={}_{}&compact=ultra&apiKey=" + CURRENCY_APIKEY
