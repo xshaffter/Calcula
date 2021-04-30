@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os.path
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -123,11 +123,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+# ]
+
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 FIXTURE_DIRS = [BASE_DIR / 'fixtures']
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 CURRENCY_APIKEY = "705783a7db80addcb45f"
 CURRENCY_API = "https://free.currconv.com/api/v7/convert?q={}_{}&compact=ultra&apiKey=" + CURRENCY_APIKEY

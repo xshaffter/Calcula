@@ -6,16 +6,19 @@
 {% endblock extrastyle %}
 
 {% block content %}
-    <div class="row mt-5" ng-controller="GenericFormController">
-    {% block form_content %}
+    <div class="container">
+        <div class="row mt-5" ng-controller="GenericFormController"
+             ng-init="init('{{ module }}', '{{ child_model }}', '{{ item.id|default:"" }}')">
+            {% block form_content %}
 
-    {% endblock %}
+            {% endblock %}
+        </div>
     </div>
 {% endblock %}
 {% block extrajs %}
     <script>
         main_url = "{{ main_url }}"
-        end_point = "{{ end_point }}"
+        end_point = "{{ end_point|lower }}"
         item_id = "{{ item_id }}"
         csrfmiddlewaretoken = "{{ csrf_token }}"
     </script>

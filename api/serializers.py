@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from cat.models import Tarjeta, Movimiento
+from cat.models import Tarjeta, Movimiento, PagoPendiente, AbonoPendiente
 from rest_framework import serializers
 
 
@@ -27,11 +27,14 @@ class ModelDataSerializer(serializers.Serializer):
 
 
 class TarjetaSerializer(serializers.ModelSerializer):
-
     owner_name = serializers.SerializerMethodField()
+    numero = serializers.SerializerMethodField()
 
     def get_owner_name(self, instance):
         return instance.owner.username
+
+    def get_numero(self, instance):
+        return instance.get_tarjeta_display()
 
     class Meta:
         model = Tarjeta
@@ -47,12 +50,19 @@ class TarjetaSerializer(serializers.ModelSerializer):
 
 
 class MovimientoSerializer(serializers.ModelSerializer):
+    moneda_display = serializers.SerializerMethodField()
+
+    def get_moneda_display(self, obj):
+        return obj.moneda.nombre_corto
+
     class Meta:
         model = Movimiento
         fields = (
             'id',
+            'tarjeta',
             'abono_pendiente',
             'moneda',
+            'moneda_display',
             'cantidad_original',
             'tarjeta',
             'cantidad',
@@ -60,4 +70,47 @@ class MovimientoSerializer(serializers.ModelSerializer):
             'adjunto',
             'concepto',
             'get_tipo_display',
+            'actions'
+        )
+
+
+class PagoPendienteSerializer(serializers.ModelSerializer):
+    moneda_display = serializers.SerializerMethodField()
+
+    def get_moneda_display(self, obj):
+        return obj.moneda.nombre_corto
+
+    class Meta:
+        model = PagoPendiente
+        fields = (
+            'id',
+            'tarjeta',
+            'cantidad_original',
+            'moneda',
+            'moneda_display',
+            'concepto',
+            'pago_automatico',
+            'get_estatus_display',
+            'actions'
+        )
+
+
+class AbonoPendienteSerializer(serializers.ModelSerializer):
+    moneda_display = serializers.SerializerMethodField()
+
+    def get_moneda_display(self, obj):
+        return obj.moneda.nombre_corto
+
+    class Meta:
+        model = AbonoPendiente
+        fields = (
+            'id',
+            'tarjeta',
+            'cantidad_original',
+            'moneda',
+            'moneda_display',
+            'concepto',
+            'pago_automatico',
+            'get_estatus_display',
+            'actions'
         )

@@ -1,0 +1,41 @@
+{% extends "components/sub_form.html" %}
+{% load widget_tweaks %}
+{% block form_content %}
+    <div class="row">
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.cantidad_original class="form-control" %}
+        </div>
+        <div class="col-6">
+            {% include "components/angular/form_field.html" with field=form.moneda class="form-control" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {% include "components/angular/form_field.html" with field=form.concepto class="form-control" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="form-check form-switch">
+                {% render_field form.pago_automatico class="form-check-input" %}
+                <label for="{{ form.pago_automatico.id_for_label }}"
+                       class="form-check-label">{{ form.pago_automatico.label }}</label>
+                <span class="text-danger">{{ form.pago_automatico.errors }}</span>
+            </div>
+            <div class="form-check form-switch">
+                {% render_field form.pago_unico class="form-check-input" %}
+                <label for="{{ form.pago_unico.id_for_label }}"
+                       class="form-check-label">{{ form.pago_unico.label }}</label>
+                <span class="text-danger">{{ form.pago_unico.errors }}</span>
+            </div>
+        </div>
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.periodicidad class="form-control" %}
+        </div>
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.programacion class="form-control" %}
+        </div>
+    </div>
+    <div class="row">
+    </div>
+{% endblock form_content %}

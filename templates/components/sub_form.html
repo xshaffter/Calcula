@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.css">
+{% endblock extrastyle %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mt-5" ng-controller="GenericSubFormController"
+             ng-init="init('{{ module }}', '{{ child_model }}', '{{ item.id|default:"" }}', '{{ parent_model }}', {{ id_parent }})">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <h3 ng-if="!data.id">Agregar {{ module }}</h3>
+                                <h3 ng-if="data.id">{{ module }} #{{ item.id }}</h3>
+                            </div>
+                            <div class="col-8 d-flex align-items-center justify-content-end">
+                                <a href="{% url "cat:model_detail" parent_model id_parent %}"
+                                   class="btn btn-danger"><i class="fa fa-times"></i></a>
+                                <button class="btn btn-success ml-2" ng-click="save()"><i
+                                        class="fa fa-check"></i></button>
+                            </div>
+                        </div>
+                        {% block form_content %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extrajs %}
+    <script src="{% static "js/angular/GenericSubFormController.js" %}"></script>
+{% endblock %}

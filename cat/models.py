@@ -5,6 +5,15 @@ from django.db import models
 from django.db.models import Sum
 
 
+def nth_separator(n, text):
+    data = [text[i:i + n] for i in range(0, len(text), n)]
+    return ' '.join(data)
+
+
+class Archivo(models.Model):
+    file = models.FileField(upload_to='archivos/')
+
+
 class Tarjeta(models.Model):
     TABLE_HEADERS = [
         {
@@ -31,24 +40,31 @@ class Tarjeta(models.Model):
     balance = models.DecimalField(default=0, decimal_places=2, max_digits=15)
 
     def actions(self):
-        actions = [{
-            'url': '{}/refresh/'.format(self.pk),
-            'class': 'fa fa-refresh',
-            'button_class': 'btn btn-info'
-        },{
-            'url': '{}/delete/'.format(self.pk),
-            'class': 'fa fa-times',
-            'button_class': 'btn btn-danger'
-        }]
+        actions = []
+        if self.movimientos_disponibles().exists():
+            actions.append({
+                'name': 'refresh',
+                'class': 'fa fa-refresh',
+                'button_class': 'btn btn-info'
+            })
+        else:
+            actions.append({
+                'name': 'delete',
+                'class': 'fa fa-times',
+                'button_class': 'btn btn-danger'
+            })
         return actions
 
     def __str__(self):
         return '{}|{}|{}'.format(self.numero[-4:], self.banco, self.balance)
 
+    def get_tarjeta_display(self):
+        return nth_separator(4, self.numero)
+
     def define_balance(self):
         ingresos = Movimiento.objects.filter(tipo=Movimiento.INGRESO).aggregate(total=Sum('cantidad'))['total']
         egresos = Movimiento.objects.filter(tipo=Movimiento.EGRESO).aggregate(total=Sum('cantidad'))['total']
-        self.balance = ingresos - egresos
+        self.balance = (ingresos or 0) - (egresos or 0)
         self.save()
 
     def pagos_disponibles(self):
@@ -62,13 +78,13 @@ class Movimiento(models.Model):
     TABLE_HEADERS = [
         {
             'display': 'Tipo',
-            'name': 'tipo',
+            'name': 'get_tipo_display',
         }, {
             'display': 'Monto a pagar',
             'name': 'cantidad_original'
         }, {
             'display': 'Moneda',
-            'name': 'moneda'
+            'name': 'moneda_display'
         }, {
             'display': 'Monto pagado',
             'name': 'cantidad'
@@ -95,9 +111,17 @@ class Movimiento(models.Model):
     tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=False, blank=False)
     cantidad = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto pagado')
     tipo = models.SmallIntegerField(choices=TIPOS_MOVIMIENTO, default=INGRESO)
-    adjunto = models.FileField(upload_to='adjuntos/', null=True, blank=True)
+    adjunto = models.ForeignKey('cat.Archivo', null=True, blank=True, on_delete=models.SET_NULL)
     concepto = models.CharField(max_length=250, null=True, blank=False)
     fecha = models.DateTimeField(auto_now_add=True)
+
+    def actions(self):
+        acciones = [{
+            'name': 'refresh',
+            'class': 'fa fa-refresh',
+            'button_class': 'btn btn-info',
+        }]
+        return acciones
 
     def define_cantidad(self):
         mxn = Moneda.objects.get(nombre_corto__iexact='mxn')
@@ -112,10 +136,32 @@ class Movimiento(models.Model):
                 cantidad = self.cantidad_original
 
         self.cantidad = cantidad
-        self.save()
+
+    def save(self, *args, **kwargs):
+        self.define_cantidad()
+        super(Movimiento, self).save(*args, **kwargs)
+        self.tarjeta.define_balance()
+        return self
 
 
 class PagoPendiente(models.Model):
+    TABLE_HEADERS = [{
+        'display': 'Monto a pagar',
+        'name': 'cantidad_original'
+    }, {
+        'display': 'Moneda',
+        'name': 'moneda_display'
+    }, {
+        'display': 'Concepto',
+        'name': 'concepto'
+    }, {
+        'display': 'Automatico',
+        'name': 'pago_automatico'
+    }, {
+        'display': 'Estatus',
+        'name': 'get_estatus_display',
+    },
+    ]
     PENDIENTE = 0
     PAGADO = 1
     PROGRAMADO = 2
@@ -125,6 +171,16 @@ class PagoPendiente(models.Model):
         (PAGADO, 'Pagado'),
         (PROGRAMADO, 'Programado'),
     )
+
+    def actions(self):
+        actions = [{
+            'name': 'pagar',
+            'class': 'fa fa-credit-card',
+            'button_class': 'btn btn-success',
+            'type': 'modal',
+        }]
+        return actions
+
     moneda = models.ForeignKey('cat.Moneda', on_delete=models.SET_NULL, null=True, blank=False)
     cantidad_original = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto a pagar')
     estatus = models.SmallIntegerField(choices=ESTADOS, default=PENDIENTE)
@@ -186,6 +242,23 @@ class Conversion(models.Model):
 
 
 class AbonoPendiente(models.Model):
+    TABLE_HEADERS = [{
+        'display': 'Monto a pagar',
+        'name': 'cantidad_original'
+    }, {
+        'display': 'Moneda',
+        'name': 'moneda_display'
+    }, {
+        'display': 'Concepto',
+        'name': 'concepto'
+    }, {
+        'display': 'Automatico',
+        'name': 'pago_automatico'
+    }, {
+        'display': 'Estatus',
+        'name': 'get_estatus_display',
+    },
+    ]
     PENDIENTE = 0
     PAGADO = 1
     PROGRAMADO = 2
@@ -195,6 +268,10 @@ class AbonoPendiente(models.Model):
         (PAGADO, 'Pagado'),
         (PROGRAMADO, 'Programado'),
     )
+
+    def actions(self):
+        pass
+
     moneda = models.ForeignKey('cat.Moneda', on_delete=models.SET_NULL, null=True, blank=False)
     cantidad_original = models.DecimalField(default=0, decimal_places=2, max_digits=15, verbose_name='Monto a pagar')
     estatus = models.SmallIntegerField(choices=ESTADOS, default=PENDIENTE)

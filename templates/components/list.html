@@ -6,8 +6,8 @@
 {% endblock extrastyle %}
 
 {% block content %}
-    <div class="container">
-        <div class="row mt-5" ng-controller="GenericListController">
+    <div class="container" ng-controller="GenericListController" ng-init="init('{{ module }}', '{{ model }}')">
+        <div class="row mt-5">
             <div class="col-12">
                 <div class="panel panel-default">
                     <div class="panel-body">
@@ -40,8 +40,8 @@
                                         <div class="d-flex flex-row justify-content-end">
                                             <a href="{{ main_url }}{$ record.id $}/detail/"
                                                class="btn btn-dark ml-2"><i class="fa fa-book"></i></a>
-                                            <a href="{$ end_point $}{$ action.url $}" ng-class="action.button_class" class="ml-2" ng-repeat="action in record.actions">
-                                                <i ng-if="!action.name" class="{$ action.class $}"></i>
+                                            <a href="{$ end_point $}{$ record.id $}/{$ action.name $}/" ng-class="action.button_class" class="ml-2" ng-repeat="action in record.actions">
+                                                <i class="{$ action.class $}"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -57,13 +57,37 @@
                 </div>
             </div>
         </div>
+        <div class="row mt-lg-5">
+            <div class="col-lg-12 text-center d-flex justify-content-center">
+                <ul class="pagination">
+                    <li ng-if="data.has_previous" ng-click="go_previous()" class="paginate_button">
+                        <i class="fa fa-chevron-left"></i>
+                    </li>
+                    <li class="paginate_button disabled"
+                        ng-if="!data.has_previous">
+                        <i class="fa fa-chevron-left"></i>
+                    </li>
+                    <li ng-repeat="page in data.pages" class="paginate_button"
+                        ng-class="{'current': page == data.page}" ng-click="goto(page)">
+                        <b>{$ page $}</b>
+                    </li>
+                    <li ng-if="data.has_next" ng-click="go_next()" class="paginate_button">
+                        <i class="fa fa-chevron-right"></i>
+                    </li>
+                    <li class="paginate_button disabled" ng-if="!data.has_next">
+                        <span>
+                            <i class="fa fa-chevron-right"></i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block extrajs %}
     <script>
         let main_url = "{{ main_url }}";
         let end_point = "{{ end_point }}";
-        let module = "{{ module|capfirst }}";
     </script>
     <script src="{% static "js/angular/GenericListController.js" %}"></script>
 {% endblock %}

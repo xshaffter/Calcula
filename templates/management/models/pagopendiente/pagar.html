@@ -1,0 +1,9 @@
+{% extends "components/modal_form.html" %}
+{% load widget_tweaks %}
+{% block form_content %}
+    <div class="row">
+        <div class="col-12">
+            {% include "components/angular/image_field.html" with field=form.adjunto class="form-control" %}
+        </div>
+    </div>
+{% endblock form_content %}

@@ -1,0 +1,97 @@
+{% load static %}
+<div class="row" ng-controller="GenericSubListController"
+     ng-init="init('{{ module }}', '{{ model }}', '{{ item_id }}')">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-4"><h3>{$ module $}</h3></div>
+            <div class="col-8 d-flex flex-row-reverse">
+                <a href="{% url "cat:model_sub_add" parent item_id model %}">
+                    <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th ng-repeat="head in headers" class="text-center">{$ head.display $}</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="record in records">
+                        <td ng-repeat="head in headers" class="text-center">
+                            <img ng-src="{$ acceed(record, head.name) $}" ng-if="head.type == 'img'" height="32">
+                            <span ng-if="!head.type" ng-attr-ng-bind="record.{$ head.name $}"></span>
+                            <button class="btn btn-info btn-sm" ng-if="head.type == 'modal'"
+                                    ng-attr-ng-show="record.{$ head.name $}"><i class="fa fa-search"></i></button>
+                        </td>
+                        <td>
+                            <button ng-click="send_api(end_point + record.id + '/' + action.name + '/')" class="btn-sm"
+                                    ng-class="action.button_class" class="ml-2" ng-repeat="action in record.actions"
+                                    ng-if="!action.type">
+                                <i class="{$ action.class $}"></i>
+                            </button>
+                            <button ng-click="open_modal_with_action(record.id, action.name)" class="btn-sm"
+                                    ng-class="action.button_class" class="ml-2" ng-repeat="action in record.actions"
+                                    ng-if="action.type == 'modal'">
+                                <i class="{$ action.class $}"></i>
+                            </button>
+                            <a href="{$ main_url $}{$ record.id $}/detail/" class="btn btn-sm btn-dark"><i
+                                    class="fa fa-book"></i></a>
+                            <a href="{$ main_url $}{$ record.id $}/edit/" class="btn btn-sm btn-warning"><i
+                                    class="fa fa-pencil"></i></a>
+                            <button ng-click="open_modal_with_action(record.id, 'delete')" class="btn btn-sm btn-danger"><i
+                                    class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                    <tr ng-if="!records.length">
+                        <td colspan="{$ headers.length + 1 $}" class="text-center"> Sin {$ module $} disponibles</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-lg-5">
+            <div class="col-lg-12 text-center d-flex justify-content-center">
+                <ul class="pagination">
+                    <li ng-if="data.has_previous" ng-click="go_previous()" class="paginate_button">
+                        <i class="fa fa-chevron-left"></i>
+                    </li>
+                    <li class="paginate_button disabled"
+                        ng-if="!data.has_previous">
+                        <i class="fa fa-chevron-left"></i>
+                    </li>
+                    <li ng-repeat="page in data.pages" class="paginate_button"
+                        ng-class="{'current': page == data.page}" ng-click="goto(page)">
+                        <b>{$ page $}</b>
+                    </li>
+                    <li ng-if="data.has_next" ng-click="go_next()" class="paginate_button">
+                        <i class="fa fa-chevron-right"></i>
+                    </li>
+                    <li class="paginate_button disabled" ng-if="!data.has_next">
+                        <span>
+                            <i class="fa fa-chevron-right"></i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal big-modal" tabindex="-1" role="dialog" id="modal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content full-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" frameborder="0" scrolling="no" id="modal-frame" class="full-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

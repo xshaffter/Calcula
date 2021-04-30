@@ -32,7 +32,7 @@ class MovimientoEditView(views.View):
             'form': form,
             'movimiento': movimiento,
         }
-        return render(request, 'management/models/movimiento/form.html', context)
+        return render(request, 'management/models/movimiento/add.html', context)
 
     def post(self, request, movimiento_id):
         movimiento = get_object_or_404(Movimiento, pk=movimiento_id)
@@ -44,7 +44,7 @@ class MovimientoEditView(views.View):
             'form': form,
             'movimiento': movimiento,
         }
-        return render(request, 'management/models/movimiento/form.html', context)
+        return render(request, 'management/models/movimiento/add.html', context)
 
 
 def eliminar_movimiento(request, movimiento_id):

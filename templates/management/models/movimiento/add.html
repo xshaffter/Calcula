@@ -1,0 +1,23 @@
+{% extends "components/sub_form.html" %}
+{% load widget_tweaks %}
+{% block form_content %}
+    <div class="row">
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.cantidad_original class="form-control" %}
+        </div>
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.moneda class="form-control" %}
+        </div>
+        <div class="col-4">
+            {% include "components/angular/form_field.html" with field=form.tipo class="form-control" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {% include "components/angular/form_field.html" with field=form.concepto class="form-control" %}
+        </div>
+        <div class="col-4">
+            {% include "components/angular/image_field.html" with field=form.adjunto class="form-control-file" %}
+        </div>
+    </div>
+{% endblock form_content %}
